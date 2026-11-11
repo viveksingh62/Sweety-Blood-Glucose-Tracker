@@ -1,0 +1,5 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import { getDateRange,todayInTimezone } from '../src/utils/dateRanges.js';
+test('daily and month-to-date use the selected date',()=>{assert.deepEqual(getDateRange('daily','2026-10-15'),{from:'2026-10-15',to:'2026-10-15'});assert.deepEqual(getDateRange('month-to-date','2026-10-15'),{from:'2026-10-01',to:'2026-10-15'})});
+test('monthly is the whole previous calendar month',()=>{assert.deepEqual(getDateRange('monthly','2026-10-15'),{from:'2026-09-01',to:'2026-09-30'});assert.deepEqual(getDateRange('monthly','2027-01-01'),{from:'2026-12-01',to:'2026-12-31'})});
+test('month boundaries handle leap February and last days',()=>{assert.deepEqual(getDateRange('monthly','2024-03-31'),{from:'2024-02-01',to:'2024-02-29'});assert.deepEqual(getDateRange('monthly','2025-03-01'),{from:'2025-02-01',to:'2025-02-28'});assert.deepEqual(getDateRange('month-to-date','2026-10-31'),{from:'2026-10-01',to:'2026-10-31'})});
+test('today uses configured timezone',()=>{assert.equal(todayInTimezone('Asia/Kolkata',new Date('2026-01-01T20:00:00.000Z')),'2026-01-02')});
