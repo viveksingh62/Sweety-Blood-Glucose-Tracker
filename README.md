@@ -10,26 +10,37 @@ Node.js 20+, npm 10+, and PostgreSQL 14+ are required. The app uses Express, `pg
 
 ```sh
 npm install
-cp .env.example .env
 ```
 
-Set a private `JWT_SECRET` in `.env`, and update the database connection strings to match your local PostgreSQL account. Create both the application and test databases:
+On Windows PowerShell, create your local env file and start PostgreSQL with Docker:
 
-```sh
-createdb sweety
-createdb sweety_test
+```powershell
+Copy-Item .env.example .env
+docker compose up -d --wait db
 npm run migrate
+npm run seed
+npm run dev
 ```
 
-The migration creates users, readings, the slot/value constraints, and the user/date index. Set `TEST_DATABASE_URL` to the separate `sweety_test` database before running API integration tests. The suite cleans test-prefixed accounts in that database.
+The compose file creates both `sweety` and `sweety_test` databases. The supplied `.env.example` connection strings match this local-only Docker setup. Change `JWT_SECRET` before using the app beyond local development. If Docker is not installed, install PostgreSQL, create both databases yourself, then set `DATABASE_URL` and `TEST_DATABASE_URL` in `.env`.
+
+To run tests against the separate test database, prepare its schema first:
+
+```powershell
+npm run migrate:test
+npm test
+```
+
+The migration creates users, readings, the slot/value constraints, and the user/date index. The API returns `503` from `/health` if it cannot connect to the configured database. The test suite cleans test-prefixed accounts from `sweety_test`.
 
 ## Run it
 
 ```sh
 npm run dev       # Express API and Vite client
 npm run build     # production client build
-npm test          # date utility and API tests
-npm run seed      # idempotent demo data
+npm run seed      # idempotent demo data (run after migration)
+npm run migrate:test  # initialize the separate test database
+npm test
 ```
 
 The API defaults to `http://localhost:3000`; Vite defaults to `http://localhost:5173`. To run either separately, use `npm run dev -w server` or `npm run dev -w client`. Vite reads `VITE_API_URL` from the root `.env`.

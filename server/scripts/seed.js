@@ -2,7 +2,7 @@ import 'dotenv/config'; import bcrypt from 'bcrypt'; import { pool } from '../sr
 const slots=['morning','after_breakfast','after_lunch','after_dinner'];
 try {
  const hash=await bcrypt.hash('Demo@1234',10);
- const u=await pool.query('INSERT INTO users(name,email,password_hash) VALUES($1,$2,$3) ON CONFLICT(email) DO UPDATE SET name=EXCLUDED.name RETURNING id',['Demo User','demo@sweety.app',hash]);
+ const u=await pool.query('INSERT INTO users(name,email,password_hash) VALUES($1,$2,$3) ON CONFLICT(email) DO UPDATE SET name=EXCLUDED.name,password_hash=EXCLUDED.password_hash RETURNING id',['Demo User','demo@sweety.app',hash]);
  const id=u.rows[0].id, today=todayInTimezone(process.env.APP_TIMEZONE||'Asia/Kolkata');
  const anchor=new Date(`${today}T12:00:00Z`);
  const days=Array.from({length:35},(_,i)=>{const d=new Date(anchor);d.setUTCDate(d.getUTCDate()-(34-i));return d.toISOString().slice(0,10)});
