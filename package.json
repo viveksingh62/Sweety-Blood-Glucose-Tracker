@@ -1,1 +1,19 @@
-{"name":"sweety","private":true,"workspaces":["server","client"],"scripts":{"dev":"concurrently -k -n api,web -c green,cyan \"npm run dev -w server\" \"npm run dev -w client\"","build":"npm run build -w client","test":"npm test -w server","migrate":"npm run migrate -w server","migrate:test":"npm run migrate:test -w server","seed":"npm run seed -w server"},"devDependencies":{"concurrently":"^9.1.2"}}
+{
+  "name": "sweety",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c green,cyan \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client",
+    "test": "npm test -w server",
+    "migrate": "npm run migrate -w server",
+    "migrate:test": "npm run migrate:test -w server",
+    "seed": "npm run seed -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

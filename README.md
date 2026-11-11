@@ -4,25 +4,27 @@ A warm, approachable blood glucose notebook with a React client and a JWT protec
 
 ## Stack and prerequisites
 
-Node.js 20+, npm 10+, and PostgreSQL 14+ are required. The app uses Express, `pg` with parameterized SQL, bcrypt, JWT, Zod, React, Vite, and React Router.
+Node.js 20+, npm 10+, and PostgreSQL 14+ are required. PostgreSQL can be installed directly on Windows; Docker is not required. The app uses Express, `pg` with parameterized SQL, bcrypt, JWT, Zod, React, Vite, and React Router.
 
 ## Install and configure
 
-```sh
+```powershell
 npm install
+Copy-Item .env.example .env
 ```
 
-On Windows PowerShell, create your local env file and start PostgreSQL with Docker:
+Edit the two database URLs in `.env` with the username, password, host, and port of your installed PostgreSQL server. This app uses separate `sweety` and `sweety_test` databases. Create them from PowerShell (change the port if your PostgreSQL installation uses a different one):
 
 ```powershell
-Copy-Item .env.example .env
-docker compose up -d --wait db
+& 'C:\Program Files\PostgreSQL\18\bin\psql.exe' -h localhost -p 5433 -U postgres -d postgres -c 'CREATE DATABASE sweety;'
+& 'C:\Program Files\PostgreSQL\18\bin\psql.exe' -h localhost -p 5433 -U postgres -d postgres -c 'CREATE DATABASE sweety_test;'
 npm run migrate
+npm run migrate:test
 npm run seed
 npm run dev
 ```
 
-The compose file creates both `sweety` and `sweety_test` databases. The supplied `.env.example` connection strings match this local-only Docker setup. Change `JWT_SECRET` before using the app beyond local development. If Docker is not installed, install PostgreSQL, create both databases yourself, then set `DATABASE_URL` and `TEST_DATABASE_URL` in `.env`.
+The SQL commands create empty databases; run them only once. The migration commands create the app tables. The seed command adds the demo account and readings. Change `JWT_SECRET` before using the app beyond local development. If PostgreSQL was installed in another folder or uses another port, adjust the psql path and `.env` connection URLs.
 
 To run tests against the separate test database, prepare its schema first:
 
@@ -51,18 +53,18 @@ Demo account: `demo@sweety.app` / `Demo@1234`.
 
 All reading and report routes require `Authorization: Bearer <token>`. The user ID always comes from the verified JWT.
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| POST | `/auth/register` | Create an account; returns user and token |
-| POST | `/auth/login` | Sign in; returns user and token |
-| GET | `/auth/me` | Current account |
-| GET | `/readings?date=YYYY-MM-DD&page=1&limit=20` | List this user's readings |
-| POST | `/readings` | Create `{ date, slot, value }` |
-| PUT | `/readings/:id` | Update an owned reading |
-| DELETE | `/readings/:id` | Delete an owned reading |
-| GET | `/reports/daily?date=YYYY-MM-DD` | Daily stats and slot-ordered readings |
-| GET | `/reports/month-to-date?date=YYYY-MM-DD` | First of month through selected date |
-| GET | `/reports/monthly?date=YYYY-MM-DD` | Whole previous calendar month |
+| Method | Path                                        | Purpose                                   |
+| ------ | ------------------------------------------- | ----------------------------------------- |
+| POST   | `/auth/register`                            | Create an account; returns user and token |
+| POST   | `/auth/login`                               | Sign in; returns user and token           |
+| GET    | `/auth/me`                                  | Current account                           |
+| GET    | `/readings?date=YYYY-MM-DD&page=1&limit=20` | List this user's readings                 |
+| POST   | `/readings`                                 | Create `{ date, slot, value }`            |
+| PUT    | `/readings/:id`                             | Update an owned reading                   |
+| DELETE | `/readings/:id`                             | Delete an owned reading                   |
+| GET    | `/reports/daily?date=YYYY-MM-DD`            | Daily stats and slot-ordered readings     |
+| GET    | `/reports/month-to-date?date=YYYY-MM-DD`    | First of month through selected date      |
+| GET    | `/reports/monthly?date=YYYY-MM-DD`          | Whole previous calendar month             |
 
 Slots: `morning`, `after_breakfast`, `after_lunch`, `after_dinner`. Dates use `YYYY-MM-DD`.
 
