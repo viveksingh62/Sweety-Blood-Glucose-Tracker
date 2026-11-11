@@ -28,7 +28,7 @@ app.use("/reports", reports);
 app.use((err, req, res, next) => errorHandler(err, req, res, next));
 const port = Number(process.env.PORT) || 3000;
 if (process.env.NODE_ENV !== "test")
-  app.listen(port, () =>
+  app.listen(port, "0.0.0.0", () =>
     process.stdout.write(`Sweety API listening on ${port}\n`),
   );
 export default app;
