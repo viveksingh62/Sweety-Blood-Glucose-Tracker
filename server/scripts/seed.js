@@ -1,4 +1,4 @@
-import 'dotenv/config'; import bcrypt from 'bcrypt'; import { pool } from '../src/config/db.js'; import { todayInTimezone } from '../src/utils/dateRanges.js';
+import '../src/config/env.js'; import bcrypt from 'bcrypt'; import { pool } from '../src/config/db.js'; import { todayInTimezone } from '../src/utils/dateRanges.js';
 const slots=['morning','after_breakfast','after_lunch','after_dinner'];
 try {
  const hash=await bcrypt.hash('Demo@1234',10);

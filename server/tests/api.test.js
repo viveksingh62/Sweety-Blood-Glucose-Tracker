@@ -1,4 +1,4 @@
-import 'dotenv/config'; import test,{before,after} from 'node:test'; import assert from 'node:assert/strict'; import request from 'supertest';
+import '../src/config/env.js'; import test,{before,after} from 'node:test'; import assert from 'node:assert/strict'; import request from 'supertest';
 const hasTestDb=!!process.env.TEST_DATABASE_URL; process.env.NODE_ENV='test'; if(hasTestDb) process.env.DATABASE_URL=process.env.TEST_DATABASE_URL;
 const [{default:app},{pool}]=await Promise.all([import('../src/index.js'),import('../src/config/db.js')]);
 let token,otherToken;
@@ -11,7 +11,7 @@ test('readings stay private and validation checks value, future date, daily limi
  assert.equal((await post({date:'2026-10-20',slot:'morning',value:39})).body.error.message,'Value must be between 40 and 600 mg/dl.');
  assert.equal((await post({date:'2999-01-01',slot:'morning',value:100})).body.error.message,'Date cannot be in the future.');
  const date='2020-01-02', made=[];for(const slot of ['morning','after_breakfast','after_lunch'])made.push((await post({date,slot,value:100})).body.reading);
- assert.equal((await post({date,slot:'morning',value:101})).body.error.message,'You already have a Morning (fasting) reading for this date.');
+ assert.equal((await post({date,slot:'morning',value:101})).body.error.message,'You already have an Morning (fasting) reading for this date.');
  made.push((await post({date,slot:'after_dinner',value:100})).body.reading);
  assert.equal((await post({date:'2020-01-02',slot:'morning',value:101})).body.error.message,'You can add only 4 readings per day.');
  assert.equal((await request(app).get('/readings').set('Authorization',`Bearer ${otherToken}`)).body.readings.length,0);
