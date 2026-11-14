@@ -83,6 +83,3 @@ Reading writes check required value and request formats first, then reject futur
 
 Refresh tokens, a clinician/doctor role, report caching, end-to-end tests, and CI.
 
-## Screenshots / screen recording
-
-_Placeholder: add screenshots or a short screen recording here._
